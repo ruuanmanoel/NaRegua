@@ -1,4 +1,8 @@
 import { randomUUID } from 'node:crypto'
+import express from 'express'
+
+const app = express();
+
 interface Servico {
     id: string;
     nome: string;
@@ -13,4 +17,11 @@ const servicos: Array<Servico> = [
 
 const listarServicos = () : Servico[] => servicos;
 
-console.log(listarServicos());
+
+app.get('/servicos', (_req, res) => {
+    res.json(listarServicos());
+})
+
+app.listen(3000, () => {
+    console.log(`Servidor escutando na porta 3000`);
+})
