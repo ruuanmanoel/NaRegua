@@ -71,6 +71,19 @@ const calcularFim = (inicio: string, duracaoMinutos: number): Date => {
   return horarioFinal;
 };
 
+const horariosSeSobrepoem = (inicioA: Date, fimA: Date, inicioB: Date, fimB: Date): boolean => {
+  const inicioAMilissegundos = inicioA.getTime();
+  const fimAMilissegundos = fimA.getTime();
+  const inicioBMilissegundos = inicioB.getTime();
+  const fimBMilissegundos = fimB.getTime();
+
+  return (
+    inicioAMilissegundos < fimBMilissegundos &&
+    fimAMilissegundos > inicioBMilissegundos
+  );
+  
+};
+
 
 app.get('/servicos', (_req, res) => {
     res.json(listarServicos());
