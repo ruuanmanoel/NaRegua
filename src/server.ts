@@ -61,6 +61,17 @@ const validarDadosAgendamento = (dado: unknown) : dado is CriarAgendamentoInput 
 
 } 
 
+const calcularFim = (inicio: string, duracaoMinutos: number): Date => {
+  const duracaoEmMilissegundos = duracaoMinutos * 60 * 1000;
+  const inicioEmMilissegundos = new Date(inicio).getTime();
+  const horarioFinal = new Date(
+    inicioEmMilissegundos + duracaoEmMilissegundos
+  );
+
+  return horarioFinal;
+};
+
+
 app.get('/servicos', (_req, res) => {
     res.json(listarServicos());
 })
