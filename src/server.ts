@@ -17,8 +17,11 @@ interface CriarAgendamentoInput {
     inicio: string
 }
 
+type StatusAgendamento = "agendado" | "cancelado";
+
 interface Agendamento extends CriarAgendamentoInput {
-    id: string
+    id: string;
+    status: StatusAgendamento;
 }
 
 const servicos: Array<Servico> = [
@@ -100,6 +103,8 @@ const existeConflito = (
   })
   
 };
+
+
  
 
 app.get('/servicos', (_req, res) => {
@@ -135,7 +140,8 @@ app.post('/agendamentos', (req: Request<{}, unknown, unknown>, res) => {
         id: randomUUID(),
         servicoId,
         nomeCliente,
-        inicio
+        inicio,
+        status: "agendado"
     };
 
     agendamentos.push(novoAgendamento);
