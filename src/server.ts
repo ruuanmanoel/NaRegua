@@ -84,6 +84,23 @@ const horariosSeSobrepoem = (inicioA: Date, fimA: Date, inicioB: Date, fimB: Dat
   
 };
 
+const existeConflito = (
+  novoInicio: string,
+  novoServico: Servico,
+): boolean => {
+
+  return agendamentos.some((agendamento) => {
+        const servico = buscarServico(agendamento.servicoId);
+        if(servico === undefined) return false;
+        const duracaoServico = servico.duracao; 
+
+      return horariosSeSobrepoem(
+        new Date(agendamento.inicio), calcularFim(agendamento.inicio, duracaoServico), 
+        new Date(novoInicio), calcularFim(novoInicio, novoServico.duracao));
+  })
+  
+};
+ 
 
 app.get('/servicos', (_req, res) => {
     res.json(listarServicos());
@@ -108,6 +125,10 @@ app.post('/agendamentos', (req: Request<{}, unknown, unknown>, res) => {
     if(servico == null) {
         return res.status(404)
         .json({"message": "Serviço não encontrado."});
+    }
+
+    if(existeConflito(inicio, servico)) {
+        return res.status(409).json({message: "horário está indisponível."});
     }
 
     const novoAgendamento: Agendamento = {
