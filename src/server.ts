@@ -106,7 +106,6 @@ const existeConflito = (
 };
 
 
- 
 
 app.get('/servicos', (_req, res) => {
     res.json(listarServicos());
@@ -170,6 +169,23 @@ app.patch("/agendamentos/:id/cancelamento", (req, res) => {
    return res.status(200).json(agendamento);
 
 })
+
+app.get("/disponibilidade", (req, res)=>{
+    const {servicoId, inicio} = req.query
+
+    if(!(typeof servicoId === 'string' && servicoId.trim().length > 0) || 
+    !(typeof inicio === 'string' && inicio.trim().length > 0)) {
+        return res.status(400).json({message: "Parâmetros informados são invalidos"})
+    }
+    if(Number.isNaN(new Date(inicio).getTime())) return res.status(400).json({message: "Parâmetros informados são invalidos"});
+
+    const servico = buscarServico(servicoId);
+    if(servico === undefined) return res.status(404).json({message: "Serviço solicitado não existe"});
+
+    const disponivel = !existeConflito(inicio, servico);
+    
+    return res.status(200).json({disponivel})
+} )
 
 app.listen(3000, () => {
     console.log(`Servidor escutando na porta 3000`);
