@@ -93,6 +93,7 @@ const existeConflito = (
 ): boolean => {
 
   return agendamentos.some((agendamento) => {
+        if(agendamento.status === 'cancelado') return false;
         const servico = buscarServico(agendamento.servicoId);
         if(servico === undefined) return false;
         const duracaoServico = servico.duracao; 
@@ -147,6 +148,27 @@ app.post('/agendamentos', (req: Request<{}, unknown, unknown>, res) => {
     agendamentos.push(novoAgendamento);
 
     return res.status(201).json(novoAgendamento);
+})
+
+app.patch("/agendamentos/:id/cancelamento", (req, res) => {
+   const { id } = req.params;
+
+   const agendamento = agendamentos.find((agendamento) => {
+        return agendamento.id === id
+   })
+
+   if(agendamento === undefined) {
+        return res.status(404).json({message: "O agendamento solicitado para cancelamento não existe."});
+   }
+   
+   if(agendamento.status === "cancelado") {
+        return res.status(409).json({message: "O agendamento ja está cancelado."});
+   }
+
+   agendamento.status = 'cancelado';
+
+   return res.status(200).json(agendamento);
+
 })
 
 app.listen(3000, () => {
